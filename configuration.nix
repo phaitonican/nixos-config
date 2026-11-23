@@ -23,6 +23,12 @@
     "flakes"
   ];
   nixpkgs.config.allowUnfree = true;
+  nix.settings.auto-optimise-store = true;
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 14d";
+  };
 
   # Run unpatched dynamically linked binaries (AppImages, downloaded tools).
   programs.nix-ld.enable = true;
@@ -165,6 +171,10 @@
   # 3. Hardware & AI
   # ------------------------------------------------------------------
 
+  # Power management and firmware updates.
+  services.power-profiles-daemon.enable = true;
+  services.fwupd.enable = true;
+
   # Intel graphics: VA-API, OpenCL, Level Zero and Vulkan.
   # Mesa is already provided by hardware.graphics; listing mesa (or the
   # deprecated mesa.drivers) in extraPackages is redundant.
@@ -175,21 +185,19 @@
       intel-media-driver
       vpl-gpu-rt
       libvdpau-va-gl
+      level-zero # Level Zero loader + zeinfo, for SYCL/oneAPI/OpenVINO
       vulkan-loader
       vulkan-validation-layers
     ];
+    # 32-bit VA-API, for 32-bit Steam/Proton video paths.
+    extraPackages32 = with pkgs.pkgsi686Linux; [ intel-media-driver ];
   };
 
-  # Ollama with Vulkan acceleration.
+  # Ollama with Vulkan acceleration. `ollama-vulkan` already sets
+  # OLLAMA_VULKAN=true and finds the system Vulkan ICDs by itself.
   services.ollama = {
     enable = true;
     package = pkgs.ollama-vulkan;
-    environmentVariables = {
-      # Make the system graphics drivers visible to Ollama.
-      LD_LIBRARY_PATH = "/run/opengl-driver/lib";
-      # Force the Vulkan backend.
-      OLLAMA_LLM_LIBRARY = "vulkan";
-    };
   };
 
   # ------------------------------------------------------------------
@@ -249,6 +257,9 @@
     brightnessctl
     systeroid
     intel-gpu-tools
+    pciutils
+    libva-utils
+    clinfo
     nix-your-shell
     kondo
 
