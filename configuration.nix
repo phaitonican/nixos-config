@@ -284,12 +284,13 @@
 
     # Browsers and communication
     chromium
-    discord-canary
+    discord
     element-desktop
     fractal
 
     # Games
     airshipper
+    prismlauncher
 
     # System monitoring
     mission-center
@@ -348,7 +349,7 @@
   # programs.adb.enable = true;
 
   # Packages not currently installed:
-  # yarn, mpv, prismlauncher, ffmpeg, jdk, rkdeveloptool, tor-browser, qemu,
+  # yarn, mpv, ffmpeg, jdk, rkdeveloptool, tor-browser, qemu,
   # tiled, gnome-tweaks, papers, showtime, dconf-editor, spacedrive,
   # appflowy, warp-terminal
 }
